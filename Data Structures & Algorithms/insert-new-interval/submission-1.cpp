@@ -1,0 +1,40 @@
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        // Only affect with those intervals which
+        //   starts in the [start, end] of new interval
+        //   or ends in the [start, end] of new interval
+        vector<vector<int>> res;
+
+        int i = 0;
+        int n = intervals.size();
+        // search for the interval ends in the new interval
+        // search for the interval starts in the new interval
+
+        // Separate into 3 parts:
+        // 1. Add intervals completely (ends) before newInterval
+        while (i < n && intervals[i][1] < newInterval[0]) {
+            res.push_back(intervals[i]);
+            i++;
+        }
+
+        // 2. Merge all overlapping intervals
+        //    ends after newInterval's start
+        //   -> just need to check if they start before newInterval's end
+        while (i < n && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = min(newInterval[0], intervals[i][0]);
+            newInterval[1] = max(newInterval[1], intervals[i][1]);
+            i++;
+        }
+
+        res.push_back(newInterval);
+
+        // 3. Add intervals completely after newInterval
+        while (i < n) {
+            res.push_back(intervals[i]);
+            i++;
+        }
+
+        return res;
+    }
+};
