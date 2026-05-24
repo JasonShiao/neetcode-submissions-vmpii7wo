@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        // my idea: peak detection
+        // if price ascending -> keep moving sell cursor
+        // once price drop -> start moving buy cursor until a lowest price befor the sell cursor
+        // sell cursor
+        // buy cursor
+        // int profit = 0;
+        // prices.push_back(0); // append 0 for cleaner handling
+        // int buy_cursor = 0;
+        // int sell_cursor = 0;
+        // while (sell_cursor < (prices.size() - 1)) {
+        //     if (prices[sell_cursor + 1] < prices[sell_cursor]) {
+        //         // !!! we guarantee each window is monotonically ascending !!!
+        //         // update profit
+        //         profit += (prices[sell_cursor] - prices[buy_cursor]);
+        //         // update cursor
+        //         buy_cursor = sell_cursor + 1;
+        //     }
+        //     sell_cursor += 1;
+        // }
+        // return profit;
+
+        // approach 2: make decision at each i
+        int profit = 0;
+        int cur_spend = prices[0];
+        for (int i = 1; i < prices.size(); i++) {
+            if (prices[i] < cur_spend) {
+                cur_spend = prices[i];
+                // no profit
+            } else {
+                // get profit
+                profit += prices[i] - cur_spend;
+                cur_spend = prices[i];
+            }
+        }
+
+        return profit;
+
+    }
+};
