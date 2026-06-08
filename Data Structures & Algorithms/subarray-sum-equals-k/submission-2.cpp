@@ -1,32 +1,50 @@
 class Solution {
 public:
-    int subarraySum(vector<int>& nums, int k) {
-        unordered_map<int, int> prefix_sum_cnt;
+    vector<int> majorityElement(vector<int>& nums) {
+        // Maybe using an animation of histogram plot could help understand
 
-        prefix_sum_cnt[0] = 1; // set initial cnt 1 for sum to 0
-        int accum_sum = 0;
-        int res = 0;
+        // generalized version of the Boyer-Moore Voting Algorithm
+        // maintain two candidate and counter
+        int cand1 = 0;
+        int cand2 = 0;
+        int cand1_cnt = 0;
+        int cand2_cnt = 0;
+        // Find the two most common cand (not guaranteed to > n/3)
         for (auto& num: nums) {
-            accum_sum += num;
-
-            // Find # ways for prefix to num - (prefix to index X) = k
-            // = Find # of prefix: prefix to num - k
-            if (prefix_sum_cnt.find(accum_sum - k) != prefix_sum_cnt.end()) {
-                // found match: update res
-                // always include the current num
-                //  -> search the number of ways to start the subarray and sum to k
-                res += prefix_sum_cnt[accum_sum - k];
+            if (num == cand1) {
+                cand1_cnt += 1;
+            } else if (num == cand2) {
+                cand2_cnt += 1;
+            } else if (cand1_cnt == 0) {
+                cand1 = num;
+                cand1_cnt = 1;
+            } else if (cand2_cnt == 0) {
+                cand2 = num;
+                cand2_cnt = 1;
             } else {
-                // not found match: do nothing
-            }
-
-            // NOTICE: update prefix sum cnt "after" res update
-            if (prefix_sum_cnt.find(accum_sum) == prefix_sum_cnt.end()) {
-                prefix_sum_cnt[accum_sum] = 1;
-            } else {
-                prefix_sum_cnt[accum_sum] += 1;
+                // dec both!!
+                cand1_cnt -= 1;
+                cand2_cnt -= 1;
             }
         }
+        // Verify: check whether > n/3
+        vector<int> res;
+        cand1_cnt = 0;
+        cand2_cnt = 0;
+        for (auto& num: nums) {
+            if (num == cand1) {
+                cand1_cnt++;
+            } else if (num == cand2) {
+                cand2_cnt++;
+            }
+        }
+        if (cand1_cnt > nums.size() / 3) {
+            res.push_back(cand1);
+        }
+        if (cand2_cnt > nums.size() / 3) {
+            res.push_back(cand2);
+        }
+
         return res;
     }
 };
